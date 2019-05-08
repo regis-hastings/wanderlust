@@ -43,7 +43,9 @@ const getForecast = async () => {
   try {
     const response = await fetch(urlToFetch);
     if (response.ok) {
-      
+      const jsonResponse = await response.json();
+      const days = jsonResponse.forecast.forecastday;
+      return days;
     }
   } catch(error) {
     console.log(error)
@@ -56,8 +58,10 @@ const getForecast = async () => {
 const renderVenues = (venues) => {
   $venueDivs.forEach(($venue, index) => {
     // Add your code here:
-
-    let venueContent = '';
+    const venue = venues[index];
+    const venueIcon = venue.categories[0].icon;
+    const venueImgSrc = `${venueIcon.prefix}bg_64${venueIcon.suffix}`;
+    let venueContent = `${createVenueHTML(venue.name, venue.location, venueImgSrc)}`;
     $venue.append(venueContent);
   });
   $destination.append(`<h2>${venues[0].location.city}</h2>`);
@@ -78,9 +82,10 @@ const executeSearch = () => {
   $weatherDivs.forEach(day => day.empty());
   $destination.empty();
   $container.css("visibility", "visible");
-  getVenues()
+  getVenues().then(venues => renderVenues(venues));
   getForecast()
   return false;
 }
 
 $submit.click(executeSearch)
+
