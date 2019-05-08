@@ -45,6 +45,7 @@ const getForecast = async () => {
     if (response.ok) {
       const jsonResponse = await response.json();
       const days = jsonResponse.forecast.forecastday;
+      console.log(days)
       return days;
     }
   } catch(error) {
@@ -70,9 +71,9 @@ const renderVenues = (venues) => {
 const renderForecast = (days) => {
   $weatherDivs.forEach(($day, index) => {
     // Add your code here:
-
-
-    let weatherContent = '';
+    const currentDay = days[index];
+    
+    let weatherContent = `${createWeatherHTML(currentDay)}`;
     $day.append(weatherContent);
   });
 }
@@ -83,9 +84,8 @@ const executeSearch = () => {
   $destination.empty();
   $container.css("visibility", "visible");
   getVenues().then(venues => renderVenues(venues));
-  getForecast()
+  getForecast().then(forecast => renderForecast(forecast));
   return false;
 }
 
 $submit.click(executeSearch)
-
