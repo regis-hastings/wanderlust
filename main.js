@@ -26,7 +26,7 @@ const getVenues = async () => {
     const response = await fetch(urlToFetch);
     if (response.ok) {
       const jsonResponse = await response.json();
-      const venues = jsonResponse.response.groups[0].items.map(item => item.venue);
+      let venues = jsonResponse.response.groups[0].items.map(item => item.venue);
       return venues;
     }
   } catch(error) {
@@ -45,7 +45,6 @@ const getForecast = async () => {
     if (response.ok) {
       const jsonResponse = await response.json();
       const days = jsonResponse.forecast.forecastday;
-      console.log(days)
       return days;
     }
   } catch(error) {
@@ -57,9 +56,10 @@ const getForecast = async () => {
 
 // Render functions
 const renderVenues = (venues) => {
+  let shuffledVenues = shuffleVenues(venues);
   $venueDivs.forEach(($venue, index) => {
     // Add your code here:
-    const venue = venues[index];
+    const venue = shuffledVenues[index];
     const venueIcon = venue.categories[0].icon;
     const venueImgSrc = `${venueIcon.prefix}bg_64${venueIcon.suffix}`;
     let venueContent = `${createVenueHTML(venue.name, venue.location, venueImgSrc)}`;
