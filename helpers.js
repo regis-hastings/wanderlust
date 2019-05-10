@@ -1,5 +1,6 @@
-const createVenueHTML = (name, location, iconSource) => {
+const createVenueHTML = (name, location, iconSource, photo) => {
   return `<h2>${name}</h2>
+  <img src="${photo}"/>
   <img class="venueimage" src="${iconSource}"/>
   <h3>Address:</h3>
   <p>${location.address}</p>

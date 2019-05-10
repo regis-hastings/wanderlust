@@ -20,7 +20,7 @@ const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
 const getVenues = async () => {
   
   const city = $input.val();
-  const urlToFetch = `${url}${city}&limit=10&client_id=${clientId}&client_secret=${clientSecret}&v=20190508`;
+  const urlToFetch = `${url}${city}&limit=10&client_id=${clientId}&client_secret=${clientSecret}&v=20190510`;
   
   try {
     const response = await fetch(urlToFetch);
@@ -33,6 +33,24 @@ const getVenues = async () => {
     console.log(error);
   }
   
+}
+
+const getPhotos = async(venueId) => {
+
+  const urlToFetch = `https://api.foursquare.com/v2/venues/${venueId}/photos?&client_id=${clientId}&client_secret=${clientSecret}&v=20190510`;
+
+  try {
+    const response = await fetch(urlToFetch);
+    
+    if (response.ok) {
+      const jsonResponse = await response.json();
+      let photoUrl = `https://fastly.4sqi.net/img/general/200x200${jsonResponse.response.photos.items[0].suffix}`;
+
+      return photoUrl;
+    }
+  } catch(error) {
+    console.log(error);
+  }
 }
 
 const getForecast = async () => {
@@ -53,16 +71,17 @@ const getForecast = async () => {
   
 }
 
-
 // Render functions
 const renderVenues = (venues) => {
   let shuffledVenues = shuffleVenues(venues);
-  $venueDivs.forEach(($venue, index) => {
+  $venueDivs.forEach(async ($venue, index) => {
     // Add your code here:
     const venue = shuffledVenues[index];
     const venueIcon = venue.categories[0].icon;
     const venueImgSrc = `${venueIcon.prefix}bg_64${venueIcon.suffix}`;
-    let venueContent = `${createVenueHTML(venue.name, venue.location, venueImgSrc)}`;
+    let photo = await getPhotos(venue.id);
+
+    let venueContent = `${createVenueHTML(venue.name, venue.location, venueImgSrc, photo)}`;
     $venue.append(venueContent);
   });
   $destination.append(`<h2>${venues[0].location.city}</h2>`);
